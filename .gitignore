@@ -1,0 +1,9 @@
+﻿# Bỏ qua thư mục .vs
+.vs/
+# Bỏ qua thư mục bin
+bin/
+# Bỏ qua thư mục obj
+obj/
+# Bỏ qua tệp cấu hình ASP.NET
+*.user
+*.suo
