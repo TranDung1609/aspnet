@@ -16,7 +16,7 @@ namespace testapi.Controllers
 
         public VersionControlController(IMongoClient mongoClient)
         {
-            var database = mongoClient.GetDatabase("local");
+            var database = mongoClient.GetDatabase("dungtm");
             _userTestsCollection = database.GetCollection<UserTest>("user_tests");
         }
 

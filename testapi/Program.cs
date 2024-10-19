@@ -2,45 +2,34 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using testapi.Models;
 using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ??ng ký MongoDB client v?i c?u hình t? appsettings.json
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var connectionString = builder.Configuration["AdsMongoDbContext:ConnectionString"];
+    return new MongoClient(connectionString);
+});
 
+// ??ng ký AdsMongoDbContext mà không c?n thay ??i file AdsMongoDbContext
+builder.Services.AddSingleton<AdsMongoDbContext>();
+
+// ??ng ký các d?ch v? khác
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<LocalMongoDBSettings>( builder.Configuration.GetSection("LocalMongoDB"));
-
-builder.Services.AddSingleton<IMongoClient>(sp =>
-{
-    var settings = sp.GetRequiredService<IOptions<LocalMongoDBSettings>>().Value;
-    return new MongoClient(settings.ConnectionString);
-});
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
+// C?u hình HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
-    app.MapGet("/", context =>
-    {
-        context.Response.Redirect("/swagger");
-        return Task.CompletedTask;
-    });
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
